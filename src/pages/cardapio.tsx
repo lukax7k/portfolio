@@ -5,27 +5,27 @@ const CardapioPage = () => {
   const navigate = useNavigate();
 
   const cardapio = {
-    entradas: [
-      { nome: "Top Burger Especial", preco: "R$ 4,00" },
-      { nome: "Cheese Burger Especial", preco: "R$ 4,50" },
-      { nome: "Salada Burger Completo", preco: "R$ 4,50" },
+    Simples: [
+      { nome: "Top Burger Especial", preco: "R$ 20,00" },
+      { nome: "Cheese Burger Especial", preco: "R$ 22,50" },
+      { nome: "Salada Burger Completo", preco: "R$ 21,50" },
     ],
     principal: [
-      { nome: "Duplo Salada Simples", preco: "R$ 4,00" },
-      { nome: "Duplo Salada Especial", preco: "R$ 4,50" },
-      { nome: "Duplo Cheese Burger", preco: "R$ 4,50" },
-      { nome: "Duplo Cheese Burger Especial", preco: "R$ 4,50" },
+      { nome: "Duplo Salada Simples", preco: "R$ 25,00" },
+      { nome: "Duplo Salada Especial", preco: "R$ 28,50" },
+      { nome: "Duplo Cheese Burger", preco: "R$ 27,50" },
+      { nome: "Duplo Cheese Burger Especial", preco: "R$ 32,50" },
     ],
-    sobremesa: [
-      { nome: "Duplo Picanha Gourmet", preco: "R$ 4,00" },
-      { nome: "Cheese Costela Burger", preco: "R$ 4,50" },
-      { nome: "Salada Burger Gourmet", preco: "R$ 4,50" },
-      { nome: "Salada Gourmet Especial", preco: "R$ 4,50" },
+    Especiais: [
+      { nome: "Duplo Picanha Gourmet", preco: "R$ 44,00" },
+      { nome: "Cheese Costela Burger", preco: "R$ 38,50" },
+      { nome: "Salada Burger Gourmet", preco: "R$ 36,50" },
+      { nome: "Salada Gourmet Especial", preco: "R$ 40,50" },
     ],
     bebidas: [
-      { nome: "Refrigerante", preco: "R$ 4,00" },
-      { nome: "Suco Natural", preco: "R$ 4,50" },
-      { nome: "Água com e sem gás", preco: "R$ 3,00" },
+      { nome: "Refrigerante", preco: "R$ 8,00" },
+      { nome: "Suco Natural", preco: "R$ 10,50" },
+      { nome: "Água com e sem gás", preco: "R$ 5,00" },
     ],
   };
 
