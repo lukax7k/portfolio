@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Agora você pode usar normalmente, como: bg-white dark:bg-black */
+
 @import "tailwindcss/preflight"
 @tailwind utilities;
 
