@@ -96,7 +96,7 @@ const BlogPage = () => {
 
   return (
     <main
-      className={`min-h-screen font-sans transition-colors duration-300 ${darkMode ? "bg-slate-900 text-white" : "bg-gray-50 text-gray-800"
+      className={`min-h-screen font-sans transition-colors duration-300 ${darkMode ? "bg-slate-900 text-white" : "bg-blue-50 text-gray-800"
         }`}
     >
       {/* Header */}

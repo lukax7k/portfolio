@@ -92,7 +92,7 @@ const BlogPostPage = () => {
   return (
     <main
       className={`min-h-screen font-sans transition-colors duration-300 ${
-        darkMode ? "bg-slate-900 text-white" : "bg-gray-100 text-gray-900"
+        darkMode ? "bg-slate-900 text-white" : "bg-blue-50 text-gray-900"
       }`}
     >
       <div className="max-w-3xl mx-auto p-6">
@@ -105,7 +105,8 @@ const BlogPostPage = () => {
         </button>
 
         {/* Post */}
-        <article className="bg-white/10 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow">
+        <article className={`${darkMode ? "bg-slate-800 text-white" : "bg-white text-gray-800"
+        } rounded-xl p-6 shadow`}>
           <img
             src={post.imagem}
             alt={post.titulo}
@@ -129,14 +130,14 @@ const BlogPostPage = () => {
         </article>
 
         {/* Comentários */}
-        <section className="mt-10 bg-white/10 border border-white/10 rounded-xl p-6 shadow">
+        <section className={`mt-10 ${darkMode ? "bg-slate-800 text-white" : "bg-white text-gray-800"} rounded-xl p-6 shadow`}>
           <h2 className="text-xl font-semibold mb-4">Comentários</h2>
           {comments.length === 0 && <p className="text-sm text-gray-400 mb-4">Nenhum comentário ainda.</p>}
           <ul className="space-y-3 mb-4">
             {comments.map((c, i) => (
               <li
                 key={i}
-                className="bg-white/5 border border-white/10 rounded p-3"
+                className={`${darkMode ? "bg-slate-700 text-white" : "bg-gray-100 text-gray-800"} border-white/10 rounded p-3`}
               >
                 {c}
               </li>
@@ -147,7 +148,7 @@ const BlogPostPage = () => {
             value={novoComentario}
             onChange={(e) => setNovoComentario(e.target.value)}
             placeholder="Escreva um comentário..."
-            className="w-full p-2 border rounded mb-3 bg-white text-black"
+            className={`w-full p-2 border rounded mb-3 ${darkMode ? "bg-slate-800 text-white" : "bg-white text-gray-800"}`}
           />
           <button
             onClick={() => {
