@@ -4,7 +4,8 @@ import Home from './pages/home';
 import ProjectPage from './pages/projectPage';
 import StoreDemoPage from './pages/houseStore';
 import CardapioPage from './pages/cardapio';
-import BlogPage from './pages/blog';
+import BlogPage from './pages/blogPage';
+import BlogPostPage from './pages/blogPostPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/projeto/1" element={<StoreDemoPage />} />
         <Route path="/projeto/2" element={<CardapioPage />} />
         <Route path="/projeto/3" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogPostPage />} />
       </Routes>
     </>
   );
