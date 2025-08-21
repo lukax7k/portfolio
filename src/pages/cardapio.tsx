@@ -22,11 +22,9 @@ const CardapioPage = () => {
   const navigate = useNavigate();
 
   const [itemSelecionado, setItemSelecionado] = useState<ItemCardapio | null>(null);
-  const [imagemExpandida, setImagemExpandida] = useState(false);
 
   const abrirModal = (item: ItemCardapio) => {
     setItemSelecionado(item);
-    setImagemExpandida(false); // Resetar zoom ao abrir
   };
 
   const fecharModal = () => setItemSelecionado(null);
