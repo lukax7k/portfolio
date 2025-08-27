@@ -28,4 +28,6 @@ export const projects: Project[] = [
     description: 'Veja um modelo para seu Blog pessoal ou proficional.',
     image: blog,
   },
+  
+  
 ];

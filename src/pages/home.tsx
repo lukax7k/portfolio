@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-
+import { Typewriter } from 'react-simple-typewriter';
 
 import ProjectCard from '../components/projectCard';
-import ThemeToggle from '../components/themeToggle';
+import Button from '../components/button';
+import Switch from '../components/switch';
+import Tooltip from '../components/contacts';
 
 import { projects } from '../data/projects';
-import whatsappIcon from '../assets/whatsapp.svg';
 import profileImage from '../assets/profile.png';
 
 import logoLight from '../assets/logolight.png';
@@ -28,6 +29,7 @@ const fadeInVariant: Variants = {
 
 const Home = () => {
   const [showMore, setShowMore] = useState(false);
+  const [showReadMoreButton, setShowReadMoreButton] = useState(false);
   const [currentLogo, setCurrentLogo] = useState(logoLight);
 
   useEffect(() => {
@@ -44,6 +46,20 @@ const Home = () => {
     });
 
     return () => observer.disconnect();
+  }, []);
+
+  // Configura timer para mostrar botão "Ler mais" após o texto ser digitado
+  useEffect(() => {
+    const text = 'Sou desenvolvedor de sites com foco em criar interfaces modernas, responsivas e acessíveis...';
+    const typeSpeed = 40; // ms por caractere
+    const delaySpeed = 1000; // delay após digitar
+    const totalTime = text.length * typeSpeed + delaySpeed;
+
+    const timer = setTimeout(() => {
+      setShowReadMoreButton(true);
+    }, totalTime);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -70,13 +86,9 @@ const Home = () => {
     "
         />
         <div className="absolute right-6 top-6 ml-auto">
-          <ThemeToggle />
+          <Switch />
         </div>
       </div>
-
-
-
-
 
       {/* INTRODUÇÃO */}
       <section className="flex flex-col md:flex-row items-center justify-between gap-10 mb-10">
@@ -107,19 +119,7 @@ const Home = () => {
             animate="visible"
             custom={0.5}
           >
-            <button
-              onClick={() => document.getElementById("contatos")?.scrollIntoView({ behavior: "smooth" })}
-              className="
-                border border-purple-600
-                dark:border-purple-400
-                px-6 py-2 rounded-lg
-                hover:bg-purple-700 dark:hover:bg-purple-500
-                hover:text-white dark:hover:text-white
-                transition-colors duration-300 mb-8
-              "
-            >
-              Entrar em contato
-            </button>
+            <Button />
           </motion.div>
         </motion.div>
 
@@ -143,16 +143,32 @@ const Home = () => {
       {/* SOBRE EXPANSÍVEL */}
       <section className="mb-10">
         <h2 className="text-2xl font-semibold mb-4 text-blue-900 dark:text-purple-400">Sobre mim</h2>
+
         <p className="text-blue-900 dark:text-blue-300 transition-colors duration-500">
-          Sou desenvolvedor de sites com foco em criar interfaces modernas, responsivas e acessíveis...
-          {!showMore && (
-            <button
-              onClick={() => setShowMore(true)}
-              className="ml-2 text-purple-600 underline"
-            >
-              Ler mais
-            </button>
-          )}
+          <Typewriter
+            words={[
+              'Sou desenvolvedor de sites com foco em criar interfaces modernas, responsivas e acessíveis...',
+            ]}
+            loop={1}
+            cursor
+            cursorStyle="|"
+            typeSpeed={40}
+            delaySpeed={1000}
+          />
+          <AnimatePresence>
+            {!showMore && showReadMoreButton && (
+              <motion.button
+                onClick={() => setShowMore(true)}
+                className="ml-2 text-purple-600 underline"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Ler mais
+              </motion.button>
+            )}
+          </AnimatePresence>
         </p>
 
         {/* Texto expandido com animação */}
@@ -174,6 +190,20 @@ const Home = () => {
                 Meu foco é transformar a sua ideia em uma aplicação funcional de alta qualidade. Desenvolvo soluções como:
                 sites completos, landing pages, cardápios digitais e páginas para uso pessoal ou profissional.
               </p>
+
+              <h3 className="text-2xl font-semibold mb-4 text-blue-900 dark:text-purple-400">Como trabalho</h3>
+
+              <p className="text-blue-900 dark:text-blue-300 transition-colors duration-500"><strong>💻 Como funciona meu trabalho como desenvolvedor web:</strong><br></br></p>
+
+              <p className="text-blue-900 dark:text-blue-300 transition-colors duration-500">
+                <strong>1. Você faz o pedido:</strong> Me conta o que precisa — tipo de site, funcionalidades desejadas e estilo visual.<br></br>
+                <strong>2. Planejamento e proposta:</strong> Com base nas suas ideias, envio uma proposta com prazos, valores e tudo o que será feito.<br></br>
+                <strong>3. Criação e programação do site:</strong> Desenvolvo o site com base no que combinamos, usando tecnologias modernas, design responsivo e otimizado.<br></br>
+                <strong>4. Revisão com você:</strong> Antes de finalizar, te envio o site para revisar. Você pode pedir ajustes, se necessário.<br></br>
+                <strong>5. Hospedagem e publicação:</strong> Te ajudo a escolher e hospedar seu site em um servidor rápido e seguro.<br></br>
+                <strong>6. Entrega e suporte:</strong> Entrego tudo funcionando e continuo disponível para suporte básico.
+              </p>
+
               <p className="text-blue-900 dark:text-blue-300 transition-colors duration-500">
                 Confira abaixo alguns exemplos práticos do meu trabalho:
               </p>
@@ -188,13 +218,12 @@ const Home = () => {
         </AnimatePresence>
       </section>
 
-
       <hr className="border-blue-700 dark:border-purple-600 transition-colors duration-500 mb-8" />
 
       {/* PROJETOS */}
       <section className="mb-16" id="projetos">
-        <h2 className="text-2xl font-semibold mb-4 text-blue-900 dark:text-purple-400">Projetos</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <h2 className="text-2xl font-semibold mb-6 text-blue-900 dark:text-purple-400">Projetos</h2>
+        <div className="flex flex-wrap justify-center md:gap-20 gap-8">
           {projects.map((project) => (
             <motion.div
               key={project.id}
@@ -202,6 +231,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               viewport={{ once: true }}
+              className="w-[300px]"
             >
               <ProjectCard {...project} />
             </motion.div>
@@ -219,32 +249,8 @@ const Home = () => {
           text-white text-center py-8 rounded-2xl shadow-lg
         "
       >
-        <h2 className="text-xl font-semibold mb-2">Entre em contato</h2>
-        <p className="mb-1">
-          📧 <a
-            href="mailto:lucasfagundesm12@gmail.com"
-            aria-label="Enviar email para lucasfagundesm12@gmail.com"
-            className="underline text-blue-200 hover:text-white transition"
-          >
-            lucasfagundesm12@gmail.com
-          </a>
-        </p>
-        <p className="flex items-center justify-center gap-2">
-          <img
-            src={whatsappIcon}
-            alt="WhatsApp"
-            className="w-5 h-5 inline"
-          />
-          <a
-            href="https://wa.me/5519999915532"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Conversar no WhatsApp com (19) 99991-5532"
-            className="underline text-blue-200 hover:text-white transition"
-          >
-            (19) 99991-5532
-          </a>
-        </p>
+        <h2 className="text-xl font-semibold mb-6">Entre em contato</h2>
+        <Tooltip />
       </footer>
     </main>
   );
