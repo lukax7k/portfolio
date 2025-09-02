@@ -7,6 +7,7 @@ import ProjectCard from '../components/projectCard';
 import Button from '../components/button';
 import Switch from '../components/switch';
 import Tooltip from '../components/contacts';
+import TechIcons from '../components/techIcons';
 
 import { projects } from '../data/projects';
 import profileImage from '../assets/profile.png';
@@ -204,9 +205,7 @@ const Home = () => {
                 <strong>6. Entrega e suporte:</strong> Entrego tudo funcionando e continuo disponível para suporte básico.
               </p>
 
-              <p className="text-blue-900 dark:text-blue-300 transition-colors duration-500">
-                Confira abaixo alguns exemplos práticos do meu trabalho:
-              </p>
+              
               <button
                 onClick={() => setShowMore(false)}
                 className="mt-2 text-purple-600 underline"
@@ -218,11 +217,22 @@ const Home = () => {
         </AnimatePresence>
       </section>
 
+      <TechIcons />
+
       <hr className="border-blue-700 dark:border-purple-600 transition-colors duration-500 mb-8" />
 
       {/* PROJETOS */}
       <section className="mb-16" id="projetos">
         <h2 className="text-2xl font-semibold mb-6 text-blue-900 dark:text-purple-400">Projetos</h2>
+        <motion.p
+            className="text-md text-blue-900 dark:text-blue-300 mb-4 transition-colors duration-500 pb-6"
+            variants={fadeInVariant}
+            initial="hidden"
+            animate="visible"
+            custom={0.3}
+          >
+            Veja alguns modelos de projetos para seu negócio:
+          </motion.p>
         <div className="flex flex-wrap justify-center md:gap-20 gap-8">
           {projects.map((project) => (
             <motion.div

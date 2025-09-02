@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import heroImage from "../assets/store-hero.png"; // imagem de fundo
-import { FaShoppingCart, FaSearch, FaTrash } from "react-icons/fa";
+import { FaShoppingCart, FaTrash, FaTruck, FaLock, FaDollarSign, FaCalendarCheck, FaThLarge } from "react-icons/fa";
+import { FaToilet, FaChair, FaBed, FaCouch } from "react-icons/fa";
+import { GiChest, GiCookingPot, GiMirrorMirror, GiWoodenCrate } from "react-icons/gi";
+import { useSwipeable } from "react-swipeable";
 
-// Importe as imagens dos produtos da pasta assets/products 
+
+import heroImage from "../assets/store-hero.png";
+import heroImage2 from "../assets/store-hero-2.png";
+import heroImage3 from "../assets/store-hero-3.png";
+
 import cadeiraModernaImg from "../assets/products/cadeira-moderna.png";
 import cadeiraEleganteImg from "../assets/products/cadeira-elegante.png";
 import poltronaLuxuosaImg from "../assets/products/poltrona-luxuosa.png";
@@ -14,58 +20,79 @@ import armarioMinimalistaImg from "../assets/products/armario-minimalista.png";
 import estanteMinimalImg from "../assets/products/estante-minimal.png";
 import sofaConfortImg from "../assets/products/sofa-confort.png";
 import sofaAconcheganteImg from "../assets/products/sofa-aconchegante.png";
+import gabineteBanheiroImg from "../assets/products/gabineteBanheiroImg.png"
+import espelhoRedondoImg from "../assets/products/espelhoRedondoImg.png"
+
+import oferta1 from "../assets/oferta1.png";
+import oferta2 from "../assets/oferta2.png";
+import oferta3 from "../assets/oferta3.png";
 
 type Produto = { nome: string; preco: number; categoria: string; img: string };
 type Notificacao = { id: number; mensagem: string };
 
 const StoreDemoPage = () => {
   const navigate = useNavigate();
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todas");
-  const [search, setSearch] = useState("");
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
+  const [search, ] = useState("");
   const [cart, setCart] = useState<Produto[]>([]);
   const [showCart, setShowCart] = useState(false);
-  const [showSaibaMais, setShowSaibaMais] = useState(false);
-
-  // Agora notificações são múltiplas
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
 
-  const categorias = ["Todas", "Cadeiras", "Mesas", "Armários", "Sofás"];
+  // Estado para o carrossel - índice da imagem atual
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+
+  // Ref para o intervalo do carrossel
+  const intervaloRef = useRef<NodeJS.Timeout | null>(null);
+
+  const categorias = [
+    { nome: "Todos", icone: <FaThLarge /> },
+    { nome: "Banheiro", icone: <FaToilet /> },
+    { nome: "Dormitório", icone: <FaBed /> },
+    { nome: "Cadeiras", icone: <FaChair /> },
+    { nome: "Armarios", icone: <GiChest /> },
+    { nome: "Cozinha", icone: <GiCookingPot /> },
+    { nome: "Espelhos", icone: <GiMirrorMirror /> },
+    { nome: "Prateleiras", icone: <GiWoodenCrate /> },
+    { nome: "Sofás", icone: <FaCouch /> },
+  ];
 
   const produtos: Produto[] = [
-    { nome: "Cadeira Moderna", preco: 399, categoria: "Cadeiras", img: cadeiraModernaImg },
-    { nome: "Cadeira Elegante", preco: 499, categoria: "Cadeiras", img: cadeiraEleganteImg },
-    { nome: "Poltrona Luxuosa", preco: 699, categoria: "Cadeiras", img: poltronaLuxuosaImg },
-    { nome: "Mesa de Madeira", preco: 1299, categoria: "Mesas", img: mesaMadeiraImg },
-    { nome: "Mesa Clássica", preco: 1199, categoria: "Mesas", img: mesaClassicaImg },
-    { nome: "Escrivaninha Moderna", preco: 1099, categoria: "Mesas", img: escrivaninhaModernaImg },
-    { nome: "Armário Minimalista", preco: 799, categoria: "Armários", img: armarioMinimalistaImg },
-    { nome: "Estante Minimal", preco: 899, categoria: "Armários", img: estanteMinimalImg },
-    { nome: "Sofá Confort", preco: 2499, categoria: "Sofás", img: sofaConfortImg },
-    { nome: "Sofá Aconchegante", preco: 2199, categoria: "Sofás", img: sofaAconcheganteImg },
+    { nome: "Cadeira Moderna", preco: 299, categoria: "Cadeiras", img: cadeiraModernaImg },
+    { nome: "Cadeira Elegante", preco: 349, categoria: "Cadeiras", img: cadeiraEleganteImg },
+    { nome: "Poltrona Luxuosa", preco: 899, categoria: "Sofás", img: poltronaLuxuosaImg },
+    { nome: "Mesa de Madeira", preco: 499, categoria: "Cozinha", img: mesaMadeiraImg },
+    { nome: "Mesa Clássica", preco: 450, categoria: "Cozinha", img: mesaClassicaImg },
+    { nome: "Escrivaninha Moderna", preco: 650, categoria: "Dormitório", img: escrivaninhaModernaImg },
+    { nome: "Armário Minimalista", preco: 1200, categoria: "Armarios", img: armarioMinimalistaImg },
+    { nome: "Estante Minimal", preco: 799, categoria: "Prateleiras", img: estanteMinimalImg },
+    { nome: "Sofá Confort", preco: 1500, categoria: "Sofás", img: sofaConfortImg },
+    { nome: "Sofá Aconchegante", preco: 1700, categoria: "Sofás", img: sofaAconcheganteImg },
+    { nome: "Gabinete Suspenso com Cuba", preco: 1299, categoria: "Banheiro", img: gabineteBanheiroImg, },
+    {
+      nome: "Espelho Redondo com Moldura de Madeira",
+      preco: 489,
+      categoria: "Espelhos",
+      img: espelhoRedondoImg,
+    },
+
+
   ];
 
   const produtosFiltrados = produtos
-    .filter((p) =>
-      categoriaSelecionada === "Todas" ? true : p.categoria === categoriaSelecionada
-    )
-    .filter((p) =>
-      p.nome.toLowerCase().includes(search.toLowerCase())
-    );
+    .filter(p => categoriaSelecionada === "Todos" || p.categoria === categoriaSelecionada)
+    .filter(p => p.nome.toLowerCase().includes(search.toLowerCase()));
 
-  // Função para adicionar notificações
   const adicionarNotificacao = (mensagem: string) => {
-    const id = Date.now() + Math.random(); // id único
-    setNotificacoes((prev) => [...prev, { id, mensagem }]);
-
-    // Remove a notificação após 3 segundos
+    const id = Date.now() + Math.random();
+    setNotificacoes(prev => [...prev, { id, mensagem }]);
     setTimeout(() => {
-      setNotificacoes((prev) => prev.filter((n) => n.id !== id));
-    }, 3000);
+      setNotificacoes(prev => prev.filter(n => n.id !== id));
+    }, 2000);
   };
 
   const adicionarAoCarrinho = (produto: Produto) => {
     setCart([...cart, produto]);
-    adicionarNotificacao(`Produto "${produto.nome}" adicionado ao carrinho!`);
+    adicionarNotificacao(`Produto adicionado ao carrinho!`);
   };
 
   const removerItem = (index: number) => {
@@ -76,285 +103,328 @@ const StoreDemoPage = () => {
 
   const total = cart.reduce((acc, item) => acc + item.preco, 0);
 
+  const formatarPreco = (valor: number) =>
+    valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  // Imagens do carrossel
+  const heroImages = [
+    heroImage,
+    heroImage2,
+    heroImage3,
+  ];
+
+  // Função que cria ou reseta o intervalo para troca automática do carrossel
+  const resetIntervalo = () => {
+    if (intervaloRef.current) clearInterval(intervaloRef.current);
+    intervaloRef.current = setInterval(() => {
+      setCurrentHeroIndex(prev =>
+        prev === heroImages.length - 1 ? 0 : prev + 1
+      );
+    }, 5000);
+  };
+
+  // Inicializa o intervalo na montagem
+  useEffect(() => {
+    resetIntervalo();
+    // Limpa o intervalo ao desmontar o componente
+    return () => {
+      if (intervaloRef.current) clearInterval(intervaloRef.current);
+    };
+  }, []);
+
+  // Funções para navegar no carrossel com reset do timer
+  const prevHero = () => {
+    setCurrentHeroIndex(prev => (prev === 0 ? heroImages.length - 1 : prev - 1));
+    resetIntervalo();
+  };
+
+  const nextHero = () => {
+    setCurrentHeroIndex(prev => (prev === heroImages.length - 1 ? 0 : prev + 1));
+    resetIntervalo();
+  };
+
+  const goToHero = (idx: number) => {
+    setCurrentHeroIndex(idx);
+    resetIntervalo();
+  };
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => nextHero(),
+    onSwipedRight: () => prevHero(),
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  });
+
+
   return (
-    <main className="min-h-screen bg-yellow-50 font-sans text-gray-900">
-      {/* HERO */}
-      <div
-        className="relative bg-cover bg-center h-96"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        <div className="absolute inset-0 bg-black opacity-50" />
-        <div className="relative z-10 flex flex-col justify-center px-8 h-full">
-          <h1 className="text-4xl font-extrabold text-white mb-3 max-w-2xl">
-            Móveis que combinam com o seu estilo de vida
-          </h1>
-          <p className="text-white mb-6 max-w-md">
-            Descubra móveis projetados para complementar seu espaço e estilo.
-          </p>
-          <button
-            className="bg-yellow-500 text-white px-6 py-3 rounded-full shadow hover:bg-yellow-600 transition w-max"
-            onClick={() => setShowSaibaMais(true)}
-          >
-            Saiba Mais
-          </button>
-        </div>
-      </div>
+    <main className="font-sans bg-white text-gray-800">
+      {/* Top Bar */}
 
-      {/* TOPO: voltar + busca + carrinho */}
-      {/* Desktop layout original */}
-      <div className="hidden md:flex max-w-6xl mx-auto p-4 items-center justify-between">
-        <button onClick={() => navigate(-1)} className="text-yellow-700 font-medium hover:underline">
-          ← Voltar
-        </button>
 
-        <div className="relative w-1/2">
-          <span className="absolute inset-y-0 left-3 flex items-center text-yellow-700">
-            <FaSearch />
-          </span>
-          <input
-            type="text"
-            placeholder="Buscar produto..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      {/* Navbar */}
+      <nav className="bg-white shadow py-4 px-6 flex items-center justify-between border-b sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+          
+          <span className="font-bold text-lg text-red-600">MóveisCasa</span>
         </div>
 
-        <button
-          className="relative text-yellow-800"
-          onClick={() => setShowCart(true)}
-          aria-label="Abrir carrinho"
-        >
-          <FaShoppingCart size={24} />
-          {cart.length > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {cart.length}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Mobile layout customizado */}
-      <div className="md:hidden max-w-6xl mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-yellow-700 font-medium hover:underline"
-          >
-            ← Voltar
-          </button>
-          <button
-            className="relative text-yellow-800"
-            onClick={() => setShowCart(true)}
-            aria-label="Abrir carrinho"
-          >
+        <div className="relative">
+          <button onClick={() => setShowCart(true)} className="text-red-600">
             <FaShoppingCart size={24} />
             {cart.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cart.length}
               </span>
             )}
           </button>
         </div>
-        <div className="relative w-full">
-          <span className="absolute inset-y-0 left-3 flex items-center text-yellow-700">
-            <FaSearch />
-          </span>
-          <input
-            type="text"
-            placeholder="Buscar produto..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
+      </nav>
 
-      {/* CATEGORIAS */}
-      <section className="max-w-6xl mx-auto px-4 mb-10">
-        <h2 className="text-xl font-semibold mb-4">Compre por Categoria</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      {/* Sessão de Categorias */}
+      <section className="bg-black text-white flex justify-around items-center py-3 px-2 sticky top-[56px] z-50 overflow-x-auto">
+        {categorias.map(({ nome, icone }) => (
           <button
-            onClick={() => setCategoriaSelecionada("Todas")}
-            className={`rounded-lg px-4 py-2 font-medium shadow transition col-span-2 md:col-span-1 ${categoriaSelecionada === "Todas"
-              ? "bg-yellow-600 text-white"
-              : "bg-white text-yellow-700 hover:bg-yellow-100"
+            key={nome}
+            onClick={() => setCategoriaSelecionada(nome)}
+            className={`flex flex-col items-center text-xs min-w-[70px] px-2 py-1 rounded-md ${categoriaSelecionada === nome ? "bg-red-600" : "hover:bg-red-700"
               }`}
           >
-            Todas
+            <div className="mb-1">{icone}</div>
+            {nome}
           </button>
-          {categorias
-            .filter((cat) => cat !== "Todas")
-            .map((cat) => (
+        ))}
+      </section>
+
+      {/* Hero - Carrossel com transição suave */}
+      <section className="relative w-full h-[300px] md:h-[500px] overflow-hidden">
+        <div {...swipeHandlers} className="w-full h-full relative">
+          {/* Imagens: vamos trocar por opacidade */}
+          {heroImages.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`Hero ${idx + 1}`}
+              className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-700 ${idx === currentHeroIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+                }`}
+            />
+          ))}
+
+          {/* Overlay preto */}
+          <div className="absolute inset-0 bg-black opacity-50 z-20 " />
+
+          {/* Texto do Hero - SEM animação, z-index maior que as imagens e overlay */}
+          <div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:pl-20 text-white text-left pointer-events-none z-30">
+          
+            <h2 className="text-3xl md:text-5xl font-bold mb-2">NOVIDADE!</h2>
+            <p className="text-lg md:text-xl font-medium mb-4">CONFIRA NOSSOS PRODUTOS</p>
+            <span className="bg-red-600 text-white px-4 py-2 md:px-6 md:py-3 text-base md:text-xl rounded-full w-max">
+              A PARTIR DE: {formatarPreco(299)}
+            </span>
+
+          </div>
+
+          {/* Botões do carrossel */}
+          {/* Botões do carrossel */}
+          <div className="hidden md:block">
+            <button
+              onClick={prevHero}
+              className="absolute top-1/2 left-4 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-80 transition z-30"
+              aria-label="Imagem anterior"
+            >
+              &#8592;
+            </button>
+            <button
+              onClick={nextHero}
+              className="absolute top-1/2 right-4 -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-80 transition z-30"
+              aria-label="Próxima imagem"
+            >
+              &#8594;
+            </button>
+          </div>
+
+
+          {/* Indicadores */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3 z-30">
+            {heroImages.map((_, idx) => (
               <button
-                key={cat}
-                onClick={() => setCategoriaSelecionada(cat)}
-                className={`rounded-lg px-4 py-2 font-medium shadow transition ${categoriaSelecionada === cat
-                  ? "bg-yellow-600 text-white"
-                  : "bg-white text-yellow-700 hover:bg-yellow-100"
+                key={idx}
+                onClick={() => goToHero(idx)}
+                className={`w-3 h-3 rounded-full ${idx === currentHeroIndex ? "bg-red-600" : "bg-white bg-opacity-50"
                   }`}
-              >
-                {cat}
-              </button>
+                aria-label={`Imagem ${idx + 1}`}
+              />
             ))}
+          </div>
         </div>
       </section>
 
-      {/* PRODUTOS */}
-<section className="max-w-6xl mx-auto px-4 mb-24">
-  <h2 className="text-xl font-semibold mb-6">
-    {categoriaSelecionada === "Todas"
-      ? "Todos os Produtos"
-      : `Categoria: ${categoriaSelecionada}`}
-  </h2>
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-    {produtosFiltrados.map((produto) => (
-      <div
-        key={produto.nome}
-        className="bg-white rounded-xl shadow p-6 text-center hover:shadow-lg transition"
-      >
-        <img
-  src={produto.img}
-  alt={produto.nome}
-  className="h-50 w-full object-contain rounded mb-4 bg-gray-100"
-/>
+      {/* Barra de Informações abaixo do Hero */}
+      <section className="max-w-7xl mx-auto px-6 py-2  border-b">
+        <button onClick={() => navigate("/")} className="text-red-600 font-medium hover:underline">
+              ← Voltar
+            </button>
+      </section>
+      <section className="max-w-7xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-gray-600 text-sm border-b">
+            
+
+        <div className="flex items-center gap-2">
+          <FaCalendarCheck className="text-red-600" />
+          <div>
+            <p className="font-semibold">Prazo de 30 dias</p>
+            <p className="text-gray-500 text-xs">garantia de devolução do dinheiro</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaTruck className="text-red-600" />
+          <div>
+            <p className="font-semibold">Frete grátis</p>
+            <p className="text-gray-500 text-xs">para compras acima de R$99</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaDollarSign className="text-red-600" />
+          <div>
+            <p className="font-semibold">Menor preço</p>
+            <p className="text-gray-500 text-xs">garantia</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaLock className="text-red-600" />
+          <div>
+            <p className="font-semibold">Compra segura</p>
+            <p className="text-gray-500 text-xs">garantia</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de Promoções */}
+      <section className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Banner 1 */}
+        <div className="relative group overflow-hidden rounded-lg shadow">
+          <img
+            src={oferta1}
+            alt="Promoção 1"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black opacity-30 z-20" />
+          <div className="absolute inset-0 flex flex-col justify-end text-left text-white p-4">
+            <h3 className="text-3xl font-bold z-30">GRANDE PROMOÇÃO</h3>
+            <p className="text-xl font-semibold z-30">50% DESCONTO</p>
+          </div>
+        </div>
+
+        {/* Banner 2 */}
+        <div className="relative group overflow-hidden rounded-lg shadow">
+          <img
+            src={oferta2}
+            alt="Promoção 2"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black opacity-30 z-20" />
+          <div className="absolute inset-0 flex flex-col justify-end text-left text-white p-4">
+            <h3 className="text-3xl font-bold z-30">OFERTA DE VERÃO</h3>
+            <p className="text-xl font-semibold z-30">15% OFF EM TODOS ITENS</p>
+          </div>
+        </div>
+
+        {/* Banner 3 */}
+        <div className="relative group overflow-hidden rounded-lg shadow">
+          <img
+            src={oferta3}
+            alt="Promoção 3"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black opacity-30 z-20" />
+          <div className="absolute inset-0 flex flex-col justify-end text-left text-white p-4">
+            <h3 className="text-3xl font-bold z-30">NOVOS ITENS</h3>
+            <p className="text-xl font-semibold z-30">CHEGANDO</p>
+          </div>
+        </div>
+      </section>
 
 
-        {/* Nome do produto */}
-        <h3 className="text-lg font-bold text-gray-800 mb-2">
-          {produto.nome}
-        </h3>
+      {/* Produtos */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h2 className="text-2xl font-semibold mb-6">Produtos em Destaque</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {produtosFiltrados.map(produto => (
+            <div key={produto.nome} className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+              <img src={produto.img} alt={produto.nome} className="w-full h-48 object-cover" />
+              <div className="p-4">
+                <h3 className="font-semibold text-lg mb-1">{produto.nome}</h3>
+                <p className="text-red-600 font-bold mb-2">{formatarPreco(produto.preco)}</p>
+                <button
+                  onClick={() => adicionarAoCarrinho(produto)}
+                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 transition w-full"
+                >
+                  Adicionar ao Carrinho
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        {/* Preço */}
-        <p className="text-lg font-semibold text-yellow-700 mb-3">
-          R$ {produto.preco.toFixed(2)}
-        </p>
-
-        <button
-          onClick={() => adicionarAoCarrinho(produto)}
-          className="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700 transition"
-        >
-          Adicionar ao Carrinho
-        </button>
-      </div>
-    ))}
-  </div>
-</section>
-
-
-      {/* MODAL DO CARRINHO */}
+      {/* Carrinho */}
       {showCart && (
-        <div
-          className="fixed inset-0 flex justify-center items-center z-50 p-4"
-          style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-        >
-          <div className="bg-yellow-50 max-w-md w-full rounded-xl shadow-xl p-6 relative border border-yellow-200 max-h-[80vh] overflow-auto">
-            <button
-              className="absolute top-2 right-3 text-gray-600 hover:text-black"
-              onClick={() => setShowCart(false)}
-            >
-              ✖
-            </button>
-            <h3 className="text-xl font-bold text-yellow-800 mb-4 border-b pb-2 border-yellow-300">
-              Seu Carrinho
-            </h3>
+        <div className="fixed inset-0  z-50 flex justify-center items-center p-4">
+          <div className="absolute inset-0 bg-black opacity-60" onClick={() => setShowCart(false)} />
+          <div className="bg-white rounded-lg max-w-md w-full p-6 relative z-60 overflow-y-auto max-h-[80vh]">
+            <h3 className="text-xl font-semibold mb-4">Seu Carrinho</h3>
             {cart.length === 0 ? (
-              <p className="text-gray-700">Seu carrinho está vazio.</p>
+              <p>Carrinho vazio</p>
             ) : (
-              <>
-                <ul className="space-y-2 mb-4 text-sm">
-                  {cart.map((item, i) => (
-                    <li
-                      key={i}
-                      className="flex justify-between items-center text-yellow-900"
+              <ul>
+                {cart.map((item, i) => (
+                  <li key={i} className="flex justify-between items-center mb-3 border-b pb-2">
+                    <div>
+                      <p className="font-semibold">{item.nome}</p>
+                      <p className="text-red-600">{formatarPreco(item.preco)}</p>
+                    </div>
+                    <button
+                      onClick={() => removerItem(i)}
+                      className="text-red-600 hover:text-red-800 transition"
+                      aria-label={`Remover ${item.nome}`}
                     >
-                      <span>{item.nome}</span>
-                      <div className="flex items-center gap-2">
-                        <span>R$ {item.preco.toFixed(2)}</span>
-                        <button
-                          onClick={() => removerItem(i)}
-                          className="text-red-500 hover:text-red-700"
-                          title="Remover"
-                        >
-                          <FaTrash size={12} />
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <div className="text-right font-semibold text-lg text-yellow-800 border-t pt-2 border-yellow-300">
-                  Total: R$ {total.toFixed(2)}
-                </div>
-              </>
+                      <FaTrash />
+                    </button>
+                  </li>
+                ))}
+              </ul>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* MODAL SAIBA MAIS */}
-      {showSaibaMais && (
-        <div
-          className="fixed inset-0 flex justify-center items-center z-50 p-4"
-          style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-          onClick={() => setShowSaibaMais(false)}
-        >
-          <div
-            className="bg-white max-w-lg w-full rounded-xl shadow-xl p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+            <div className="mt-4 font-bold text-lg">Total: {formatarPreco(total)}</div>
             <button
-              className="absolute top-2 right-3 text-gray-600 hover:text-black"
-              onClick={() => setShowSaibaMais(false)}
+              onClick={() => setShowCart(false)}
+              className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-500 transition"
             >
-              ✖
+              Fechar
             </button>
-            <h3 className="text-2xl font-bold mb-4 text-yellow-800">Saiba Mais</h3>
-            <p className="text-gray-700">
-              Aqui você pode colocar informações adicionais sobre sua loja, promoções,
-              novidades ou qualquer conteúdo que deseje destacar.
-            </p>
           </div>
         </div>
       )}
 
-      {/* NOTIFICAÇÕES (múltiplas) */}
-      <div
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 space-y-2 z-50 max-w-xs md:max-w-sm"
-        style={{ pointerEvents: "none" }}
-      >
-        {notificacoes.map((notificacao) => (
+
+      {/* Notificações - parte inferior central */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-2">
+        {notificacoes.map(({ id, mensagem }) => (
           <div
-            key={notificacao.id}
-            className={`bg-yellow-600 text-white rounded shadow-lg animate-fadeInOut
-    px-4 py-2 text-sm md:px-5 md:py-3 md:text-base whitespace-nowrap`}
+            key={id}
+            className="bg-red-600 text-white text-sm px-1 py-3 rounded-lg shadow-lg animate-slide-up min-w-[220px] max-w-full text-center"
           >
-            Produto adicionado ao carrinho!
+            {mensagem}
           </div>
 
         ))}
       </div>
 
-      {/* Estilos customizados */}
-      <style>{`
-  @keyframes fadeInOut {
-    0%, 100% { opacity: 0; transform: translateY(10px); }
-    10%, 90% { opacity: 1; transform: translateY(0); }
-  }
-  .animate-fadeInOut {
-    animation: fadeInOut 3s ease forwards;
-  }
-  /* Ajuste responsivo para notificação no mobile */
-@media (max-width: 768px) {
-  div.fixed.bottom-4.left-1/2 {
-    max-width: 90vw; /* Aumenta largura para quase toda a tela */
-    font-size: 0.75rem; /* fonte menor */
-    padding: 0.25rem 0.75rem; /* padding lateral um pouco maior */
-    border-radius: 0.5rem;
-    white-space: nowrap; /* força o texto ficar em uma linha */
-  }
-}
+      {/* Footer */}
+      <footer className="bg-gray-100 mt-12">
 
-`}</style>
+        <div className="text-center text-gray-500 text-xs py-4 border-t">
+          © {new Date().getFullYear()} MóveisCasa. Todos os direitos reservados.
+        </div>
+      </footer>
+
 
     </main>
   );
