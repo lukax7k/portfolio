@@ -5,6 +5,8 @@ import StoreDemoPage from './pages/houseStore';
 import CardapioPage from './pages/cardapio';
 import BlogPage from './pages/blogPage';
 import BlogPostPage from './pages/blogPostPage';
+import RealEstatePage from './pages/realStatePage';
+import ImovelDetalhes from './pages/imovelDetalhes';
 
 function App() {
   return (
@@ -12,9 +14,11 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/projeto/1" element={<StoreDemoPage />} />
-        <Route path="/projeto/2" element={<CardapioPage />} />
-        <Route path="/projeto/3" element={<BlogPage />} />
+        <Route path="/projeto/1" element={<RealEstatePage />} />
+        <Route path="/imovel/:id" element={<ImovelDetalhes />} />
+        <Route path="/projeto/2" element={<StoreDemoPage />} />
+        <Route path="/projeto/3" element={<CardapioPage />} />
+        <Route path="/projeto/4" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogPostPage />} />
       </Routes>
     </>

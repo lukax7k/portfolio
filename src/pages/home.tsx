@@ -231,7 +231,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               viewport={{ once: true }}
-              className="w-[300px]"
+              className="w-[280px] md:w-[300px]"
             >
               <ProjectCard {...project} />
             </motion.div>

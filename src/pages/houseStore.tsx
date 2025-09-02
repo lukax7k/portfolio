@@ -201,36 +201,46 @@ const StoreDemoPage = () => {
       </section>
 
       {/* PRODUTOS */}
-      <section className="max-w-6xl mx-auto px-4 mb-24">
-        <h2 className="text-xl font-semibold mb-6">
-          {categoriaSelecionada === "Todas"
-            ? "Todos os Produtos"
-            : `Categoria: ${categoriaSelecionada}`}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {produtosFiltrados.map((produto) => (
-            <div
-              key={produto.nome}
-              className="bg-white rounded-xl shadow p-6 text-center hover:shadow-lg transition"
-            >
-              <img
-                src={produto.img}
-                alt={produto.nome}
-                className="h-40 w-full object-cover rounded mb-4"
-              />
-              <p className="text-lg font-semibold mb-3">
-                R$ {produto.preco.toFixed(2)}
-              </p>
-              <button
-                onClick={() => adicionarAoCarrinho(produto)}
-                className="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700 transition"
-              >
-                Adicionar ao Carrinho
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
+<section className="max-w-6xl mx-auto px-4 mb-24">
+  <h2 className="text-xl font-semibold mb-6">
+    {categoriaSelecionada === "Todas"
+      ? "Todos os Produtos"
+      : `Categoria: ${categoriaSelecionada}`}
+  </h2>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {produtosFiltrados.map((produto) => (
+      <div
+        key={produto.nome}
+        className="bg-white rounded-xl shadow p-6 text-center hover:shadow-lg transition"
+      >
+        <img
+  src={produto.img}
+  alt={produto.nome}
+  className="h-50 w-full object-contain rounded mb-4 bg-gray-100"
+/>
+
+
+        {/* Nome do produto */}
+        <h3 className="text-lg font-bold text-gray-800 mb-2">
+          {produto.nome}
+        </h3>
+
+        {/* Preço */}
+        <p className="text-lg font-semibold text-yellow-700 mb-3">
+          R$ {produto.preco.toFixed(2)}
+        </p>
+
+        <button
+          onClick={() => adicionarAoCarrinho(produto)}
+          className="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700 transition"
+        >
+          Adicionar ao Carrinho
+        </button>
+      </div>
+    ))}
+  </div>
+</section>
+
 
       {/* MODAL DO CARRINHO */}
       {showCart && (
