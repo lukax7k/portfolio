@@ -76,6 +76,7 @@ const finalidades = ["Todos", "Comprar", "Alugar"];
 const statusFiltros = ["Todos", ...statusPossiveis];
 const amenidadesFiltros = amenidadesPossiveis;
 
+
 const RealEstatePage = () => {
   const [busca, setBusca] = useState("");
   const [favoritos, setFavoritos] = useState<number[]>([]);
@@ -91,6 +92,7 @@ const RealEstatePage = () => {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const imoveisContainerRef = useRef<HTMLDivElement>(null);
   const OFFSET = 1000;
+  const [animar, setAnimar] = useState(false);
 
   // Estado para mostrar/esconder filtros mobile
   const [mostrarFiltrosMobile, setMostrarFiltrosMobile] = useState(false);
@@ -104,15 +106,15 @@ const RealEstatePage = () => {
   // Atualiza isDesktop e mostrarFiltrosMobile conforme o tamanho da tela
   useEffect(() => {
     const handleResize = () => {
-  const desktop = window.innerWidth >= 768;
-  setIsDesktop(desktop);
+      const desktop = window.innerWidth >= 768;
+      setIsDesktop(desktop);
 
-  // Só atualiza mostrarFiltrosMobile se estiver em transição para desktop
-  if (desktop) {
-    setMostrarFiltrosMobile(true);
-  }
-  // NÃO fecha automaticamente no mobile
-};
+      // Só atualiza mostrarFiltrosMobile se estiver em transição para desktop
+      if (desktop) {
+        setMostrarFiltrosMobile(true);
+      }
+      // NÃO fecha automaticamente no mobile
+    };
 
 
     window.addEventListener("resize", handleResize);
@@ -133,7 +135,9 @@ const RealEstatePage = () => {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
   }, [favoritos]);
 
- 
+  useEffect(() => {
+    setTimeout(() => setAnimar(true), 70); // pequeno delay para disparar transições CSS
+  }, []);
 
 
   // Bairros dinâmicos baseados na cidade selecionada
@@ -173,7 +177,7 @@ const RealEstatePage = () => {
       );
     });
 
-    
+
 
   const totalPaginas = Math.ceil(imoveisFiltrados.length / itensPorPagina);
   const imoveisPaginaAtual = imoveisFiltrados.slice(
@@ -188,16 +192,16 @@ const RealEstatePage = () => {
   };
 
   // Dentro do seu componente RealEstatePage, antes do return:
-const handleChangePage = (p: number) => {
-  setPaginaAtual(p);
-  if (imoveisContainerRef.current) {
-    const top =
-      imoveisContainerRef.current.getBoundingClientRect().top +
-      window.pageYOffset -
-      OFFSET;
-    window.scrollTo({ top, behavior: "smooth" });
-  }
-};
+  const handleChangePage = (p: number) => {
+    setPaginaAtual(p);
+    if (imoveisContainerRef.current) {
+      const top =
+        imoveisContainerRef.current.getBoundingClientRect().top +
+        window.pageYOffset -
+        OFFSET;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
 
 
 
@@ -211,12 +215,20 @@ const handleChangePage = (p: number) => {
 
       >
         {/* Hero */}
+
         <div
-          className="relative bg-cover bg-center h-[400px] md:h-[500px]"
-          style={{ backgroundImage: `url(${destaqueImg})` }} // mantém o destaque aqui
+          className={`relative bg-cover bg-center h-[400px] md:h-[500px] transform transition-all duration-700 ease-out ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          style={{ backgroundImage: `url(${destaqueImg})` }}
         >
+
+
           <div className="absolute inset-0 bg-black/40" />
+
           <div className="relative z-10 h-full flex flex-col justify-center items-start px-6 md:px-20 text-white">
+            <button onClick={() => navigate("/")} className="text-white font-medium hover:underline">
+              ← Voltar
+            </button>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 max-w-xl">
               Encontre seu imóvel ideal com o melhor custo-benefício
             </h1>
@@ -237,36 +249,37 @@ const handleChangePage = (p: number) => {
         </div>
 
         {/* Botão para mostrar filtros no mobile */}
-        <div className="md:hidden flex justify-end max-w-6xl mx-auto px-4 py-2">
-          <button
-            onClick={() => setMostrarFiltrosMobile((m) => !m)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
-            aria-expanded={mostrarFiltrosMobile}
-            aria-controls="filtros-mobile"
-          >
-            {mostrarFiltrosMobile ? (
-              <>
-                <FaTimes /> Fechar filtros
-              </>
-            ) : (
-              <>
-                <FaFilter /> Filtros
-              </>
-            )}
-          </button>
-        </div>
+        <div
+  className={`md:hidden flex justify-end max-w-6xl mx-auto px-4 py-2 transition-all duration-500 ease-out ${
+    animar ? "opacity-100 scale-100" : "opacity-0 scale-95"
+  }`}
+>
+  <button
+    onClick={() => setMostrarFiltrosMobile((m) => !m)}
+    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition"
+    aria-expanded={mostrarFiltrosMobile}
+    aria-controls="filtros-mobile"
+  >
+    {mostrarFiltrosMobile ? (
+      <>
+        <FaTimes /> Fechar filtros
+      </>
+    ) : (
+      <>
+        <FaFilter /> Filtros
+      </>
+    )}
+  </button>
+</div>
+
 
         {/* Filtros - desktop e mobile */}
         <section
           id="filtros-mobile"
-          className={`max-w-6xl mx-auto px-4 py-6 space-y-4
-          md:block
-          ${mostrarFiltrosMobile
-              ? "block max-h-[1000px] opacity-100 transition-all duration-500 ease-in-out overflow-visible"
-              : "hidden max-h-0 opacity-0 transition-all duration-500 ease-in-out overflow-hidden"
-            }
-        `}
+          className={`max-w-6xl mx-auto px-4 py-6 space-y-4 transition-all duration-700 ease-out delay-200 transform ${animar ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            } ${mostrarFiltrosMobile ? "block" : "md:block hidden"}`}
         >
+
           <h2 className="text-xl font-semibold">Filtros de busca</h2>
 
           <div className="flex flex-wrap gap-3">
@@ -333,22 +346,23 @@ const handleChangePage = (p: number) => {
 
         {/* Lista de imóveis */}
         <section
-        ref={imoveisContainerRef}
-  className={`max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 md:min-h-[500px] gap-6 ${
-    imoveisPaginaAtual.length === 0 ? "md:min-h-[600px]" : ""
-  }`}
->
+          ref={imoveisContainerRef}
+          className={`max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 md:min-h-[500px] gap-6 ${imoveisPaginaAtual.length === 0 ? "md:min-h-[600px]" : ""
+            }`}
+        >
 
           {imoveisPaginaAtual.length === 0 ? (
             <p className="col-span-full text-center text-gray-600">Nenhum imóvel encontrado.</p>
           ) : (
             imoveisPaginaAtual.map((imovel) => (
               <div
-                key={imovel.id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition cursor-pointer flex flex-col relative"
-                onClick={() => navigate(`/imovel/${imovel.id}`)}
-                aria-label={`Ver detalhes do ${imovel.titulo}`}
-              >
+  key={imovel.id}
+  className={`bg-white rounded-lg shadow hover:shadow-lg cursor-pointer flex flex-col relative transform transition-all duration-500 ease-out ${
+    animar ? "opacity-100 scale-100" : "opacity-0 scale-95"
+  }`}
+  onClick={() => navigate(`/imovel/${imovel.id}`)}
+>
+
                 <div
                   className="h-48 bg-cover bg-center rounded-t-lg"
                   style={{ backgroundImage: `url(${imovel.imagem})` }}
@@ -370,7 +384,7 @@ const handleChangePage = (p: number) => {
                   </div>
                 </div>
                 <button
-                  className="absolute top-2 right-2 text-red-500 text-xl"
+                  className="absolute top-53 right-2 text-red-500 text-xl"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFavorito(imovel.id);
@@ -394,13 +408,13 @@ const handleChangePage = (p: number) => {
           aria-label="Paginação dos imóveis"
         >
           <button
-  disabled={paginaAtual === 1}
-  onClick={() => handleChangePage(Math.max(1, paginaAtual - 1))}
-  className="px-3 py-1 rounded bg-blue-600 text-white disabled:bg-gray-400"
-  aria-disabled={paginaAtual === 1}
->
-  Anterior
-</button>
+            disabled={paginaAtual === 1}
+            onClick={() => handleChangePage(Math.max(1, paginaAtual - 1))}
+            className="px-3 py-1 rounded bg-blue-600 text-white disabled:bg-gray-400"
+            aria-disabled={paginaAtual === 1}
+          >
+            Anterior
+          </button>
           {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
@@ -413,13 +427,13 @@ const handleChangePage = (p: number) => {
             </button>
           ))}
           <button
-  disabled={paginaAtual === totalPaginas}
-  onClick={() => handleChangePage(Math.min(totalPaginas, paginaAtual + 1))}
-  className="px-3 py-1 rounded bg-blue-600 text-white disabled:bg-gray-400"
-  aria-disabled={paginaAtual === totalPaginas}
->
-  Próximo
-</button>
+            disabled={paginaAtual === totalPaginas}
+            onClick={() => handleChangePage(Math.min(totalPaginas, paginaAtual + 1))}
+            className="px-3 py-1 rounded bg-blue-600 text-white disabled:bg-gray-400"
+            aria-disabled={paginaAtual === totalPaginas}
+          >
+            Próximo
+          </button>
         </nav>
         {/* Background de prédios fixo acima do footer */}
         <div className="w-full flex justify-center">
@@ -431,7 +445,7 @@ const handleChangePage = (p: number) => {
           <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm text-gray-700">
 
             {/* Sobre */}
-            <div> 
+            <div>
               <h3 className="text-lg font-semibold text-blue-600 mb-3">ImobiFácil</h3>
               <p className="text-gray-600">
                 Encontre os melhores imóveis para comprar ou alugar com praticidade, confiança e segurança.
