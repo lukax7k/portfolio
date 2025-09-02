@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import "tailwindcss";
+@import "./pages/background.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -11,3 +12,4 @@
 body {
   @apply transition-colors duration-300;
 }
+

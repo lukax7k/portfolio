@@ -3,6 +3,7 @@ import cardapio from '../assets/cardapio.png';
 import blog from '../assets/blog.png';
 import imovel from '../assets/imovel.png';
 
+
 export interface Project {
   id: string;
   title: string;
