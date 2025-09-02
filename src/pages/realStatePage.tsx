@@ -104,14 +104,16 @@ const RealEstatePage = () => {
   // Atualiza isDesktop e mostrarFiltrosMobile conforme o tamanho da tela
   useEffect(() => {
     const handleResize = () => {
-      const desktop = window.innerWidth >= 768;
-      setIsDesktop(desktop);
-      if (desktop) {
-        setMostrarFiltrosMobile(true); // filtros sempre visíveis no desktop
-      } else {
-        setMostrarFiltrosMobile(false); // filtros escondidos no mobile inicialmente
-      }
-    };
+  const desktop = window.innerWidth >= 768;
+  setIsDesktop(desktop);
+
+  // Só atualiza mostrarFiltrosMobile se estiver em transição para desktop
+  if (desktop) {
+    setMostrarFiltrosMobile(true);
+  }
+  // NÃO fecha automaticamente no mobile
+};
+
 
     window.addEventListener("resize", handleResize);
 
@@ -440,8 +442,8 @@ const handleChangePage = (p: number) => {
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">Navegação</h4>
               <ul className="space-y-1">
-                <li><a href="/" className="hover:text-blue-600">Início</a></li>
-                <li><a href="/#filtros-mobile" className="hover:text-blue-600">Buscar Imóveis</a></li>
+                <li><a href="#" className="hover:text-blue-600">Início</a></li>
+                <li><a href="#" className="hover:text-blue-600">Buscar Imóveis</a></li>
                 <li><a href="#" className="hover:text-blue-600">Favoritos</a></li>
                 <li><a href="#" className="hover:text-blue-600">Contato</a></li>
               </ul>
