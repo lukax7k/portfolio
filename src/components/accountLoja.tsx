@@ -92,7 +92,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) => {
 
               {/* Botão Ver Histórico */}
               <button
-                onClick={() => alert('Abrirá modal de histórico futuramente')}
+                onClick={() => alert('Simulação de compras e histórico futuramente! :)')}
                 className="w-full bg-[#e60000] hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition duration-300"
               >
                 Ver Histórico

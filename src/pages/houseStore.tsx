@@ -47,7 +47,7 @@ type LoginFormData = {
   password: string;
 };
 
-type Produto = { nome: string; preco: number; categoria: string; img: string };
+type Produto = { id: string, nome: string; preco: number; categoria: string; img: string, quantidade: number };
 type Notificacao = { id: number; mensagem: string };
 
 const StoreDemoPage = () => {
@@ -56,7 +56,7 @@ const StoreDemoPage = () => {
   const [search,] = useState("");
   const [cart, setCart] = useState<Produto[]>([]);
   const [showCart, setShowCart] = useState(false);
-  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+  const [notificacoes, ] = useState<Notificacao[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalLoginOpen, setModalLoginOpen] = useState(false);
   const form = useForm<LojaUserForm>();
@@ -95,36 +95,44 @@ const StoreDemoPage = () => {
   const intervaloRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleRegistro = async (data: LojaUserForm) => {
-    toast.promise(
-      axios.post('https://api-users-1tzc.onrender.com/loja/users', data),
-      {
-        loading: 'Registrando usuário...',
-        success: (res) => {
-          localStorage.setItem('userId', res.data.id);
-          fecharModal();
-          return 'Usuário registrado com sucesso!';
-        },
-        error: 'Erro ao registrar usuário. Tente novamente.',
-      }
-    );
-  };
+  toast.promise(
+    axios.post('https://api-users-1tzc.onrender.com/loja/users', data),
+    {
+      loading: 'Registrando usuário...',
+      success: (res) => {
+        localStorage.setItem('userId', res.data.id);
+        fecharModal();
+        return 'Usuário registrado com sucesso!';
+      },
+      error: (err) => {
+        const mensagemErro = err.response?.data?.error || 'Erro ao registrar usuário. Tente novamente.';
+        return mensagemErro;
+      },
+    }
+  );
+};
+
 
   const handleLogin = async (data: LoginFormData) => {
-    toast.promise(
-      axios.post('https://api-users-1tzc.onrender.com/loja/login', data),
-      {
-        loading: 'Logando...',
-        success: (res) => {
-          console.log('Login response:', res.data);
-          localStorage.setItem('userId', res.data.user.id);
-          fecharLModal();
-          console.log(res.data.user.id);
-          return 'Login realizado com sucesso!';
-        },
-        error: 'Erro ao logar com usuário. Tente novamente.',
+  toast.promise(
+    axios.post('https://api-users-1tzc.onrender.com/loja/login', data),
+    {
+      loading: 'Logando...',
+      success: (res) => {
+        console.log('Login response:', res.data);
+        localStorage.setItem('userId', res.data.user.id);
+        fecharLModal();
+        console.log(res.data.user.id);
+        return 'Login realizado com sucesso!';
+      },
+      error: (err) => {
+        const mensagemErro = err.response?.data?.error || 'Erro ao logar com usuário. Tente novamente.';
+        return mensagemErro;
       }
-    );
-  };
+    }
+  );
+};
+
 
   const categorias = [
     { nome: "Todos", icone: <FaThLarge /> },
@@ -139,22 +147,22 @@ const StoreDemoPage = () => {
   ];
 
   const produtos: Produto[] = [
-    { nome: "Cadeira Moderna", preco: 299, categoria: "Cadeiras", img: cadeiraModernaImg },
-    { nome: "Cadeira Elegante", preco: 349, categoria: "Cadeiras", img: cadeiraEleganteImg },
-    { nome: "Poltrona Luxuosa", preco: 899, categoria: "Sofás", img: poltronaLuxuosaImg },
-    { nome: "Mesa de Madeira", preco: 499, categoria: "Cozinha", img: mesaMadeiraImg },
-    { nome: "Mesa Clássica", preco: 450, categoria: "Cozinha", img: mesaClassicaImg },
-    { nome: "Escrivaninha Moderna", preco: 650, categoria: "Dormitório", img: escrivaninhaModernaImg },
-    { nome: "Armário Minimalista", preco: 1200, categoria: "Armarios", img: armarioMinimalistaImg },
-    { nome: "Estante Minimal", preco: 799, categoria: "Prateleiras", img: estanteMinimalImg },
-    { nome: "Sofá Confort", preco: 1500, categoria: "Sofás", img: sofaConfortImg },
-    { nome: "Sofá Aconchegante", preco: 1700, categoria: "Sofás", img: sofaAconcheganteImg },
-    { nome: "Gabinete Suspenso com Cuba", preco: 1299, categoria: "Banheiro", img: gabineteBanheiroImg, },
+    { id: "p1001", nome: "Cadeira Moderna", preco: 299, categoria: "Cadeiras", img: cadeiraModernaImg, quantidade: 1 },
+    { id: "p1002", nome: "Cadeira Elegante", preco: 349, categoria: "Cadeiras", img: cadeiraEleganteImg, quantidade: 1 },
+    { id: "p1003", nome: "Poltrona Luxuosa", preco: 899, categoria: "Sofás", img: poltronaLuxuosaImg, quantidade: 1 },
+    { id: "p1004", nome: "Mesa de Madeira", preco: 499, categoria: "Cozinha", img: mesaMadeiraImg, quantidade: 1 },
+    { id: "p1005", nome: "Mesa Clássica", preco: 450, categoria: "Cozinha", img: mesaClassicaImg, quantidade: 1 },
+    { id: "p1006", nome: "Escrivaninha Moderna", preco: 650, categoria: "Dormitório", img: escrivaninhaModernaImg, quantidade: 1 },
+    { id: "p1007", nome: "Armário Minimalista", preco: 1200, categoria: "Armarios", img: armarioMinimalistaImg, quantidade: 1 },
+    { id: "p1008", nome: "Estante Minimal", preco: 799, categoria: "Prateleiras", img: estanteMinimalImg, quantidade: 1 },
+    { id: "p1009", nome: "Sofá Confort", preco: 1500, categoria: "Sofás", img: sofaConfortImg, quantidade: 1 },
+    { id: "p1010", nome: "Sofá Aconchegante", preco: 1700, categoria: "Sofás", img: sofaAconcheganteImg, quantidade: 1 },
+    { id: "p1011", nome: "Gabinete Suspenso com Cuba", preco: 1299, categoria: "Banheiro", img: gabineteBanheiroImg, quantidade: 1 },
     {
-      nome: "Espelho Redondo com Moldura de Madeira",
+      id: "p1012", nome: "Espelho Redondo com Moldura de Madeira",
       preco: 489,
       categoria: "Espelhos",
-      img: espelhoRedondoImg,
+      img: espelhoRedondoImg, quantidade: 1
     },
 
 
@@ -164,26 +172,58 @@ const StoreDemoPage = () => {
     .filter(p => categoriaSelecionada === "Todos" || p.categoria === categoriaSelecionada)
     .filter(p => p.nome.toLowerCase().includes(search.toLowerCase()));
 
-  const adicionarNotificacao = (mensagem: string) => {
-    const id = Date.now() + Math.random();
-    setNotificacoes(prev => [...prev, { id, mensagem }]);
-    setTimeout(() => {
-      setNotificacoes(prev => prev.filter(n => n.id !== id));
-    }, 2000);
+  
+
+  const adicionarAoCarrinho = async (produto: Produto) => {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      toast.error("Faça login para adicionar itens ao carrinho.");
+      return;
+    }
+
+    try {
+      console.log("Produto enviado:", produto);
+      await axios.post(`https://api-users-1tzc.onrender.com/loja/users/${userId}/carrinho`, { produto });
+      toast.success("Produto adicionado ao carrinho!");
+
+      // Opcional: atualiza visualmente o carrinho
+      setCart(prev => [...prev, produto]);
+    } catch (error) {
+      console.error("Erro ao adicionar produto:", error);
+      toast.error("Erro ao adicionar ao carrinho.");
+    }
   };
 
-  const adicionarAoCarrinho = (produto: Produto) => {
-    setCart([...cart, produto]);
-    adicionarNotificacao(`Produto adicionado ao carrinho!`);
-  };
 
-  const removerItem = (index: number) => {
-    const novoCarrinho = [...cart];
-    novoCarrinho.splice(index, 1);
-    setCart(novoCarrinho);
-  };
+  const removerItem = async (index: number) => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    toast.error("Usuário não autenticado.");
+    return;
+  }
 
-  const total = cart.reduce((acc, item) => acc + item.preco, 0);
+
+
+  try {
+  await axios.delete(`https://api-users-1tzc.onrender.com/loja/users/${userId}/carrinho/${index}`);
+  toast.success("Item removido do carrinho!");
+  const novoCarrinho = [...cart];
+  novoCarrinho.splice(index, 1);
+  setCart(novoCarrinho);
+} catch (error: any) {
+  // Tenta pegar a mensagem de erro que vem da API
+  const mensagemErro = error.response?.data?.error || "Erro ao remover item do carrinho.";
+  console.error("Erro ao remover item:", mensagemErro);
+  toast.error(mensagemErro);
+}
+};
+
+
+  const total = Array.isArray(cart)
+  ? cart.reduce((acc, item) => acc + item.preco * (item.quantidade || 1), 0)
+  : 0;
+
 
   const formatarPreco = (valor: number) =>
     valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -215,8 +255,39 @@ const StoreDemoPage = () => {
   }, []);
 
   useEffect(() => {
-  localStorage.clear(); // limpa tudo do localStorage
-}, []);
+    localStorage.clear(); // limpa tudo do localStorage
+  }, []);
+
+ useEffect(() => {
+  const fetchCarrinho = async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    try {
+      const res = await axios.get(`https://api-users-1tzc.onrender.com/loja/users/${userId}/carrinho`);
+
+      console.log("Carrinho da API:", res.data);
+
+      // Aqui, validamos se 'res.data.carrinho' é realmente um array
+      if (Array.isArray(res.data.carrinho)) {
+        setCart(res.data.carrinho); // ✅ Correto agora
+      } else {
+        setCart([]);
+        console.warn("Carrinho não é um array:", res.data.carrinho);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar carrinho:", error);
+      setCart([]);
+    }
+  };
+
+  if (showCart) {
+    fetchCarrinho();
+  }
+}, [showCart]);
+
+
+
 
   // Funções para navegar no carrossel com reset do timer
   const prevHero = () => {
@@ -242,15 +313,15 @@ const StoreDemoPage = () => {
   });
 
   const handleClickUserButton = () => {
-  const userId = localStorage.getItem('userId');
-  if (userId) {
-    // Se tiver userId, abre a tela da conta
-    handleOpenAcModal(); // substitua pela sua função ou lógica para abrir a conta
-  } else {
-    // Senão, abre o modal de login
-    abrirLModal();
-  }
-};
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      // Se tiver userId, abre a tela da conta
+      handleOpenAcModal(); // substitua pela sua função ou lógica para abrir a conta
+    } else {
+      // Senão, abre o modal de login
+      abrirLModal();
+    }
+  };
 
 
 
@@ -276,7 +347,17 @@ const StoreDemoPage = () => {
           </div>
 
           <div className="flex gap-4 relative">
-            <button onClick={() => setShowCart(true)} className="text-red-600 hover:text-red-800">
+            <button
+              onClick={() => {
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                  toast.error("Faça login para visualizar o carrinho.");
+                  return;
+                }
+                setShowCart(true);
+              }}
+              className="text-red-600 hover:text-red-800"
+            >
               <FaShoppingCart size={24} />
               {cart.length > 0 && (
                 <span className="absolute -top-2 right-7 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -284,10 +365,11 @@ const StoreDemoPage = () => {
                 </span>
               )}
             </button>
+
             <button onClick={handleClickUserButton} className="text-red-600 hover:text-red-800 transition">
               <FaUser size={22} />
             </button>
-            
+
           </div>
         </nav>
 
@@ -477,6 +559,8 @@ const StoreDemoPage = () => {
         </section>
 
         {/* Carrinho */}
+
+
         {showCart && (
           <div className="fixed inset-0  z-50 flex justify-center items-center p-4">
             <div className="absolute inset-0 bg-black opacity-60" onClick={() => setShowCart(false)} />
@@ -487,20 +571,21 @@ const StoreDemoPage = () => {
               ) : (
                 <ul>
                   {cart.map((item, i) => (
-                    <li key={i} className="flex justify-between items-center mb-3 border-b pb-2">
-                      <div>
-                        <p className="font-semibold">{item.nome}</p>
-                        <p className="text-red-600">{formatarPreco(item.preco)}</p>
-                      </div>
-                      <button
-                        onClick={() => removerItem(i)}
-                        className="text-red-600 hover:text-red-800 transition"
-                        aria-label={`Remover ${item.nome}`}
-                      >
-                        <FaTrash />
-                      </button>
-                    </li>
-                  ))}
+  <li key={i} className="flex justify-between items-center mb-3 border-b pb-2">
+    <div>
+      <p className="font-semibold">{item.nome}</p>
+      <p className="text-sm text-gray-600">Qtd: {item.quantidade}</p>
+      <p className="text-red-600">{formatarPreco(item.preco)}</p>
+    </div>
+    <button
+      onClick={() => removerItem(i)}
+      className="text-red-600 hover:text-red-800 transition"
+    >
+      <FaTrash />
+    </button>
+  </li>
+))}
+
                 </ul>
               )}
               <div className="mt-4 font-bold text-lg">Total: {formatarPreco(total)}</div>
@@ -670,41 +755,41 @@ const StoreDemoPage = () => {
           }}
         >
           {/* Nome e Senha lado a lado */}
-          
-            <input
-              {...Lform.register('name')}
-              placeholder="Nome"
-              style={{
-                flex: 1,
-                minWidth: 0,
-                padding: '12px 20px',
-                borderRadius: '24px',
-                border: '1px solid #ccc',
-                backgroundColor: '#f3f4f6',
-                fontWeight: 'bold',
-                boxSizing: 'border-box'
-              }}
-            />
-            <input
-              {...Lform.register('password')}
-              type="password"
-              placeholder="Senha"
-              style={{
-                flex: 1,
-                minWidth: 0,
-                padding: '12px 20px',
-                borderRadius: '24px',
-                border: '1px solid #ccc',
-                backgroundColor: '#f3f4f6',
-                fontWeight: 'bold',
-                boxSizing: 'border-box'
-              }}
-            />
-         
+
+          <input
+            {...Lform.register('name')}
+            placeholder="Nome"
+            style={{
+              flex: 1,
+              minWidth: 0,
+              padding: '12px 20px',
+              borderRadius: '24px',
+              border: '1px solid #ccc',
+              backgroundColor: '#f3f4f6',
+              fontWeight: 'bold',
+              boxSizing: 'border-box'
+            }}
+          />
+          <input
+            {...Lform.register('password')}
+            type="password"
+            placeholder="Senha"
+            style={{
+              flex: 1,
+              minWidth: 0,
+              padding: '12px 20px',
+              borderRadius: '24px',
+              border: '1px solid #ccc',
+              backgroundColor: '#f3f4f6',
+              fontWeight: 'bold',
+              boxSizing: 'border-box'
+            }}
+          />
+
 
         </ModalLogin>
 
-         <AccountModal isOpen={isModalAcOpen} onClose={handleCloseAcModal} />
+        <AccountModal isOpen={isModalAcOpen} onClose={handleCloseAcModal} />
       </main>
     </>
   );
