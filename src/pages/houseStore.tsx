@@ -214,6 +214,10 @@ const StoreDemoPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+  localStorage.clear(); // limpa tudo do localStorage
+}, []);
+
   // Funções para navegar no carrossel com reset do timer
   const prevHero = () => {
     setCurrentHeroIndex(prev => (prev === 0 ? heroImages.length - 1 : prev - 1));
