@@ -54,7 +54,7 @@ export function ModalLogin<T extends FieldValues>({
       }
 
       const user = await res.json();
-      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userId', user._id);
       alert('Login realizado com sucesso!');
       onClose();
     } catch (error) {

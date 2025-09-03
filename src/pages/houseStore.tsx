@@ -10,6 +10,7 @@ import { ModalLogin } from '../components/loginModal';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
 import { FaUser } from 'react-icons/fa';
+import AccountModal from '../components/accountLoja';
 
 
 
@@ -60,6 +61,7 @@ const StoreDemoPage = () => {
   const [modalLoginOpen, setModalLoginOpen] = useState(false);
   const form = useForm<LojaUserForm>();
   const Lform = useForm<LoginFormData>();
+  const [isModalAcOpen, setIsModalAcOpen] = useState(false);
 
 
 
@@ -82,6 +84,9 @@ const StoreDemoPage = () => {
     setModalLoginOpen(false);
     form.reset(); // opcional: limpa os campos
   };
+
+  const handleOpenAcModal = () => setIsModalAcOpen(true);
+  const handleCloseAcModal = () => setIsModalAcOpen(false);
 
   // Estado para o carrossel - índice da imagem atual
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
@@ -110,9 +115,10 @@ const StoreDemoPage = () => {
       {
         loading: 'Logando...',
         success: (res) => {
-          localStorage.setItem('userId', res.data.id);
+          console.log('Login response:', res.data);
+          localStorage.setItem('userId', res.data.user.id);
           fecharLModal();
-          console.log(res.data.id);
+          console.log(res.data.user.id);
           return 'Login realizado com sucesso!';
         },
         error: 'Erro ao logar com usuário. Tente novamente.',
@@ -231,6 +237,18 @@ const StoreDemoPage = () => {
     trackMouse: true,
   });
 
+  const handleClickUserButton = () => {
+  const userId = localStorage.getItem('userId');
+  if (userId) {
+    // Se tiver userId, abre a tela da conta
+    handleOpenAcModal(); // substitua pela sua função ou lógica para abrir a conta
+  } else {
+    // Senão, abre o modal de login
+    abrirLModal();
+  }
+};
+
+
 
   return (
     <>
@@ -262,10 +280,10 @@ const StoreDemoPage = () => {
                 </span>
               )}
             </button>
-            <button onClick={abrirLModal} className="text-red-600 hover:text-red-800 transition">
+            <button onClick={handleClickUserButton} className="text-red-600 hover:text-red-800 transition">
               <FaUser size={22} />
             </button>
-
+            
           </div>
         </nav>
 
@@ -682,7 +700,7 @@ const StoreDemoPage = () => {
 
         </ModalLogin>
 
-
+         <AccountModal isOpen={isModalAcOpen} onClose={handleCloseAcModal} />
       </main>
     </>
   );
