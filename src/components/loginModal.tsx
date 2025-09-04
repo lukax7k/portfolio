@@ -6,10 +6,10 @@ type ModalLoginProps<T extends FieldValues> = {
   onClose: () => void;
   onSubmit?: (data: T) => Promise<void>; // opcional para customizar o submit
   form: UseFormReturn<T>;
+  hideRegisterLink?: boolean;
   apiRoute?: string; // rota padrão para login, se não passar onSubmit
   children: React.ReactNode;
   title?: string;
-  
   abrirModal: () => void;
   submitText?: string;
   styleWrapper?: React.CSSProperties;
@@ -31,6 +31,7 @@ export function ModalLogin<T extends FieldValues>({
   title = 'Login',
   submitText = 'Entrar',
   styleWrapper,
+  hideRegisterLink,
   styleContent,
   styleTitle,
   styleButtonCancel,
@@ -82,6 +83,7 @@ export function ModalLogin<T extends FieldValues>({
               gap: 10,
             }}
           >
+            {!hideRegisterLink && (
             <span style={{ fontSize: '14px', color: '#555' }}>
               Não tem uma conta?{' '}
               <button
@@ -95,7 +97,7 @@ export function ModalLogin<T extends FieldValues>({
                   border: 'none',
                   padding: 0,
                   margin: 0,
-                  color: '#c30000',
+                  color: '#555555',
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -103,7 +105,8 @@ export function ModalLogin<T extends FieldValues>({
               >
                 Registre-se
               </button>
-            </span>
+            </span> 
+          )}
 
             <div style={{ display: 'flex', gap: 10 }}>
               <button type="submit" style={{ ...defaultButtonSubmit, ...styleButtonSubmit }}>
@@ -132,7 +135,7 @@ const defaultWrapperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: 9999
+  zIndex: 60
 };
 
 const defaultContentStyle: React.CSSProperties = {

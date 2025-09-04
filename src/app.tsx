@@ -20,6 +20,7 @@ function App() {
         <Route path="/projeto/3" element={<CardapioPage />} />
         <Route path="/projeto/4" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogPostPage />} />
+        
       </Routes>
     </>
   );

@@ -67,7 +67,7 @@ export function ModalRegister<T extends FieldValues>({
                   border: 'none',
                   padding: 0,
                   margin: 0,
-                  color: '#c30000',
+                  color: '#555555',
                   fontWeight: 'bold',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -106,7 +106,7 @@ const defaultWrapperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: 9999
+  zIndex: 60
 };
 
 const defaultContentStyle: React.CSSProperties = {

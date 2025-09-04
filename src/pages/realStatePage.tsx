@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaSearch, FaRegHeart, FaFilter, FaTimes } from "react-icons/fa";
 import destaqueImg from "../assets/hero-house.png";
 import background from '../assets/backgroundBuild.png';
+import Sidebar from '../components/sidebar';
 
 
 // Tipos
@@ -212,8 +213,11 @@ const RealEstatePage = () => {
 
       <main
         className=" font-sans bg-gray-50 min-h-screen flex flex-col"
-
+        
       >
+        <div className="absolute top-4 right-4 z-50">
+  <Sidebar />
+</div>
         {/* Hero */}
 
         <div
@@ -229,6 +233,7 @@ const RealEstatePage = () => {
             <button onClick={() => navigate("/")} className="text-white font-medium hover:underline">
               ← Voltar
             </button>
+            
             <h1 className="text-3xl md:text-5xl font-bold mb-4 max-w-xl">
               Encontre seu imóvel ideal com o melhor custo-benefício
             </h1>
